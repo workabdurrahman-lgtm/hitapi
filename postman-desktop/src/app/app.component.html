@@ -1,0 +1,16 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <mat-toolbar>Menu</mat-toolbar>
+    <app-history-panel (requestLoaded)="loadRequestFromHistory($event)"></app-history-panel>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <span>Postman Clone</span>
+    </mat-toolbar>
+    <div class="content">
+      <app-request-builder #requestBuilder (responseReceived)="onResponseReceived($event)" [historyPanel]="historyPanel"></app-request-builder>
+      <app-response-viewer [response]="currentResponse"></app-response-viewer>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,18 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$postman-desktop-primary: mat.define-palette(mat.$indigo-palette);
+$postman-desktop-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+$postman-desktop-theme: mat.define-light-theme((
+  color: (
+    primary: $postman-desktop-primary,
+    accent: $postman-desktop-accent,
+  )
+));
+
+@include mat.all-component-themes($postman-desktop-theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

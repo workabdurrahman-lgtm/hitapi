@@ -1,0 +1,20 @@
+<div class="response-viewer" *ngIf="response">
+  <mat-card>
+    <mat-card-content>
+      <div class="status-line">
+        <span class="status-code" [ngClass]="statusClass">{{ response.status }} {{ response.statusText }}</span>
+      </div>
+
+      <mat-tab-group>
+        <mat-tab label="Body">
+          <ngx-json-viewer [json]="response.body" [expanded]="true"></ngx-json-viewer>
+        </mat-tab>
+        <mat-tab label="Headers">
+          <div *ngFor="let key of headerKeys" class="header-item">
+            <strong>{{ key }}:</strong> {{ response.headers.get(key) }}
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

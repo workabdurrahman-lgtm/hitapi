@@ -1,0 +1,28 @@
+.request-builder {
+  .url-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .method-selector {
+      width: 120px;
+    }
+
+    .url-input {
+      flex-grow: 1;
+    }
+  }
+
+  .key-value-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .body-input {
+    width: 100%;
+    min-height: 200px;
+  }
+}
