@@ -1,0 +1,192 @@
+
+# Debugging Guide for Angular + Electron Build Errors
+
+These steps will help the coding agent (like Jules AI) systematically fix a cascade of Angular build errors involving missing modules, dependency injection, and component imports.
+
+---
+
+## 1. Focus on the First Error in the Log
+Usually, the **first error** in the build log is the *root cause*. Later errors are often consequences.
+
+Example:
+```
+Could not resolve "@angular/animations/browser"
+```
+This means Angular Animations dependencies are missing.
+
+### ✅ Fix:
+Run:
+```bash
+npm install @angular/animations @angular/platform-browser
+```
+Then try again:
+```bash
+ng build
+```
+
+---
+
+## 2. Verify Folder Structure and Import Paths
+Errors like:
+```
+Cannot find module '../../services/storage.service'
+```
+Mean the file path or filename is incorrect.
+
+Check that your files are in the right places. Example:
+
+```
+src/app/components/history-panel/history-panel.ts
+src/app/services/storage.service.ts
+```
+Then the import should be:
+```ts
+import { StorageService } from '../../services/storage.service';
+```
+
+Angular is **case-sensitive**, so make sure filenames and imports match exactly.
+
+---
+
+## 3. Fix Dependency Injection (DI) Setup
+Errors like:
+```
+No suitable injection token for parameter 'storageService'
+```
+Mean Angular doesn’t recognize that class as an injectable service.
+
+### ✅ Fix each service file like this:
+```ts
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class StorageService {
+  constructor() {}
+}
+```
+
+Do this for **all services** (e.g., `http.service.ts`, `collection.service.ts`, `environment.service.ts`).
+
+---
+
+## 4. Component Import vs. Module Declaration
+Errors like:
+```
+Component imports must be standalone components or NgModules
+```
+Mean you’re mixing Angular 17 *standalone components* and *NgModules*.
+
+Pick one style — **either standalone or traditional module-based**.
+
+### ✅ If using traditional modules:
+In `app.module.ts`:
+```ts
+@NgModule({
+  declarations: [
+    AppComponent,
+    RequestBuilderComponent,
+    HistoryPanelComponent
+  ],
+  imports: [BrowserModule, FormsModule, HttpClientModule],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
+
+### ✅ If using standalone components:
+Make sure each component has:
+```ts
+@Component({
+  standalone: true,
+  selector: 'app-request-builder',
+  templateUrl: './request-builder.html',
+  imports: [CommonModule, FormsModule]
+})
+```
+And in your `AppComponent`, import them like:
+```ts
+@Component({
+  standalone: true,
+  imports: [RequestBuilderComponent, HistoryPanelComponent],
+  templateUrl: './app.component.html'
+})
+```
+
+---
+
+## 5. Fix Angular Material SCSS Errors
+Error:
+```
+Undefined function. $postman-desktop-primary: mat.define-palette(...)
+```
+
+Means Angular Material’s SCSS utilities aren’t loaded correctly.
+
+### ✅ Fix:
+1. Install Angular Material:
+   ```bash
+   ng add @angular/material
+   ```
+2. In `styles.scss`, make sure you’re using the new syntax:
+   ```scss
+   @use '@angular/material' as mat;
+
+   $postman-desktop-primary: mat.define-palette(mat.$indigo-palette);
+   $postman-desktop-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+   $postman-desktop-theme: mat.define-light-theme((
+     color: (
+       primary: $postman-desktop-primary,
+       accent: $postman-desktop-accent
+     )
+   ));
+
+   @include mat.all-component-themes($postman-desktop-theme);
+   ```
+
+---
+
+## 6. Run a Clean Rebuild
+After fixing paths and dependencies, clear and rebuild everything:
+
+```bash
+rm -rf node_modules dist
+npm install
+ng build
+```
+
+If it works, then proceed to:
+```bash
+npm run electron:build
+```
+
+---
+
+## 7. Verify Project Configuration
+Double-check your `tsconfig.json` and `angular.json` paths.
+Make sure all `src/app/**` folders exist and are correctly referenced.
+
+---
+
+## 8. Optional: Quick Sanity Test
+Before building Electron, make sure Angular builds cleanly first:
+
+```bash
+ng serve
+```
+If that succeeds, then you can safely bundle it into Electron.
+
+---
+
+## Summary
+- Fix missing Angular dependencies first.
+- Verify import paths (case-sensitive).
+- Ensure all services use `@Injectable({ providedIn: 'root' })`.
+- Choose *either* standalone or module-based components (not both).
+- Reinstall Material and fix SCSS syntax.
+- Run a clean rebuild before Electron packaging.
+
+---
+
+Following these steps systematically will fix 95% of cascading Angular build errors in new Electron+Angular projects.
