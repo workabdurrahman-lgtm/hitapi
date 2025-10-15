@@ -1,0 +1,8 @@
+
+> postman-desktop@0.0.0 start:electron
+> concurrently "npm:start" "wait-on http-get://localhost:4200/ && electron ."
+
+[start]
+[start] > postman-desktop@0.0.0 start
+[start] > ng serve
+[start]

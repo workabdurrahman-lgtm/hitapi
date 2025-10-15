@@ -1,0 +1,59 @@
+<div class="request-builder">
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="requestForm" (ngSubmit)="sendRequest()">
+        <div class="url-container">
+          <mat-form-field appearance="outline" class="method-selector">
+            <mat-select formControlName="method">
+              <mat-option *ngFor="let method of methods" [value]="method">{{ method }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="url-input">
+            <input matInput formControlName="url" placeholder="Enter request URL">
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit" [disabled]="!requestForm.valid">Send</button>
+        </div>
+
+        <mat-tab-group>
+          <mat-tab label="Params">
+            <div formArrayName="params">
+              <div *ngFor="let param of params.controls; let i = index" [formGroupName]="i" class="key-value-pair">
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="key" placeholder="Key">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="value" placeholder="Value">
+                </mat-form-field>
+                <button mat-icon-button (click)="removeParam(i)">
+                  <mat-icon>remove_circle_outline</mat-icon>
+                </button>
+              </div>
+              <button mat-button type="button" (click)="addParam()">Add Param</button>
+            </div>
+          </mat-tab>
+          <mat-tab label="Headers">
+            <div formArrayName="headers">
+              <div *ngFor="let header of headers.controls; let i = index" [formGroupName]="i" class="key-value-pair">
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="key" placeholder="Key">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="value" placeholder="Value">
+                </mat-form-field>
+                <button mat-icon-button (click)="removeHeader(i)">
+                  <mat-icon>remove_circle_outline</mat-icon>
+                </button>
+              </div>
+              <button mat-button type="button" (click)="addHeader()">Add Header</button>
+            </div>
+          </mat-tab>
+          <mat-tab label="Body">
+            <mat-form-field appearance="outline" class="body-input">
+              <textarea matInput formControlName="body" placeholder="Request body (JSON)"></textarea>
+            </mat-form-field>
+          </mat-tab>
+        </mat-tab-group>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
